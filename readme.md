@@ -70,6 +70,9 @@ cd URL-Shortener
 
 # 3. Instale as dependências
 npm install
+
+# 4. Importe a estrutura SQL através do arquivo database/struct.sql
+mysql -u user -p url_shortener < struct.sql
 ```
 
 ### Configuração
