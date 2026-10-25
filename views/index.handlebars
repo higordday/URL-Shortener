@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+
+    <title>URL Shortener | Index</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css" integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <link rel="stylesheet" href="/css/pages/index.css">
+
+</head>
+<body>
+
+    {{#if failure}} <script type="text/javascript"> alert('{{failure}}'); </script> {{/if}}
+
+    <main class="app">
+        <section class="card" aria-labelledby="app-title">
+
+            <header class="card__header">
+                <span class="card__logo" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+
+                <h1 class="card__title" id="app-title">URL Shortener</h1>
+
+                <p class="card__subtitle">Shorten a link or check how it is performing.</p>
+            </header>
+
+            <div class="tabs" role="tablist" aria-label="Choose an action">
+                <button type="button" class="tabs__item is-active" role="tab" id="tab-new-url"aria-selected="true" aria-controls="panel-new-url" data-target="panel-new-url"><i class="fa-solid fa-plus" aria-hidden="true"></i>New URL</button>
+
+                <button type="button" class="tabs__item" role="tab" id="tab-statistics" aria-selected="false" aria-controls="panel-statistics" data-target="panel-statistics" tabindex="-1"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i>Statistics</button>
+            </div>
+
+            <div class="panel" id="panel-new-url" role="tabpanel" aria-labelledby="tab-new-url">
+                <form class="form" action="/urls/create" method="post">
+
+                    {{#if create_url_form_failure}} <div class="form_failure"><p>{{create_url_form_failure}}</p></div> {{/if}}
+
+                    <label class="form__label" for="url_id">Long URL</label>
+
+                    <div class="form__row">
+                        <div class="field">
+                            <i class="field__icon fa-solid fa-globe" aria-hidden="true"></i>
+
+                            <input class="field__input" type="url" name="url" id="url_id" placeholder="https://example.com/your-long-link" autocomplete="url" inputmode="url" required>
+                        </div>
+
+                        <button class="btn btn--primary" type="submit">Shorten<i class="fa-solid fa-angle-right" aria-hidden="true"></i></button>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="panel" id="panel-statistics" role="tabpanel" aria-labelledby="tab-statistics" hidden>
+                <form class="form" action="/url/statistics" method="get">
+
+                    {{#if statistics_form_failure}} 
+                    
+                        <div class="form_failure"><p>{{statistics_form_failure}}</p></div> 
+
+                        <script type="text/javascript"> 
+                        
+                            document.getElementById('panel-new-url').style.display = 'none'; document.getElementById('panel-statistics').style.display = 'block';
+                        
+                        </script>
+                        
+                    {{/if}}
+
+                    <label class="form__label" for="token_id">Token</label>
+
+                    <div class="form__row">
+                        <div class="field">
+                            <i class="field__icon fa-solid fa-key" aria-hidden="true"></i>
+
+                            <input class="field__input" type="text" name="private_token" id="token_id" placeholder="Paste the token of your link" autocomplete="off" spellcheck="false" required></div>
+
+                        <button class="btn btn--secondary" type="submit">View statistics<i class="fa-solid fa-angle-right" aria-hidden="true"></i></button>
+                    </div>
+
+                </form>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+
+        (function ()
+        {
+
+            const tabs = Array.from(document.querySelectorAll('.tabs__item'));
+
+            function activate(tab, focus)
+            {
+
+                tabs.forEach(function (item)
+                {
+
+                    const selected = item === tab;
+                    const panel = document.getElementById(item.dataset.target);
+
+                    item.classList.toggle('is-active', selected);
+                    item.setAttribute('aria-selected', selected);
+
+                    item.tabIndex = selected ? 0 : -1;
+                    panel.hidden = !selected;
+
+                });
+
+                if (focus) tab.focus();
+
+            }
+
+            tabs.forEach(function (tab, index)
+            {
+
+                tab.addEventListener('click', function () { activate(tab, false); });
+
+                tab.addEventListener('keydown', function (event)
+                {
+
+                    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+
+                    const step = event.key === 'ArrowRight' ? 1 : -1;
+                    
+                    activate(tabs[(index + step + tabs.length) % tabs.length], true);
+
+                });
+
+            });
+
+        })();
+
+    </script>
+
+</body>
+</html>
